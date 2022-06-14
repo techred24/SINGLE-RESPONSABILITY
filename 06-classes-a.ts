@@ -1,43 +1,114 @@
 (() => {
+
+    // Single-responsability principle
+    // Prioritize composition over inheritance.
+
     type Gender = 'M' | 'F';
 
-    class Person {
-        constructor(
-            public name: string,
-            public gender: Gender,
-            public birthdate: Date
-        ){}
+    interface PersonProps {
+        name        : string;
+        gender      : Gender;
+        birthdate   : Date;
     }
 
-    class User extends Person {
-        private lastAccess: Date;
-        constructor(
-            public email: string,
-            public role: string,
-            name: string,
-            gender: Gender,
-            birthdate: Date
-        ) {
-            super(name, gender, birthdate);
-            this.lastAccess = new Date();
+    class Person {
+        public name: string;
+        public gender: Gender;
+        public birthdate: Date;
+        constructor({ name, gender, birthdate }: PersonProps){
+            this.name = name;
+            this.gender = gender;
+            this.birthdate = birthdate;
         }
+    }
+
+    interface UserProps {
+        email       : string;
+        role        : string;
+    }
+
+    class User {
+        public email: string;
+        public lastAccess: Date;
+        public role: string;
+
+        constructor(
+            { email, role }: UserProps,
+        ) {
+            this.lastAccess = new Date();
+            this.email = email;
+            this.role = role;
+        }
+
         checkCredentials() {
             return true;
         }
     }
 
-    class UserSettings extends User {
+
+
+
+    interface SettingsProps {
+        workingDirectory : string;
+        lastOpenFolder   : string;
+    }
+
+
+    class Settings {
+        workingDirectory: string;
+        lastOpenFolder: string;
         constructor(
-            workingDirectory: string,
-            lastOpenFolder: string,
-            email: string,
-            role: string,
-            name: string,
-            gender: Gender,
-            birthdate: Date
+            { workingDirectory, lastOpenFolder }: SettingsProps
         ) {
-            super(email, role, name, gender, birthdate);
+            this.workingDirectory = workingDirectory;
+            this.lastOpenFolder = lastOpenFolder;
         }
     }
+
+    interface UserSettingsProps {
+        workingDirectory: string;
+        lastOpenFolder  : string;
+        email           : string;
+        role            : string;
+        name            : string;
+        gender          : Gender
+        birthdate       : Date;
+    }
+
+    class UserSettings {
+        public person: Person;
+        public user: User;
+        public settings: Settings;
+
+        constructor({
+            workingDirectory,
+            lastOpenFolder,
+            email,
+            role,
+            name,
+            gender,
+            birthdate
+        }: UserSettingsProps) {
+            this.person = new Person({ name, gender, birthdate });
+            this.user = new User({ email, role });
+            this.settings = new Settings({ workingDirectory, lastOpenFolder });
+        }
+    }
+
+
+    const userSettings = new UserSettings(
+        {
+        workingDirectory    :'/usr/home',
+        lastOpenFolder      :'/home',
+        email               :'flubber@google.com',
+        role                :'Admin',
+        name                :'Flubber',
+        gender              :'M',
+        birthdate           :new Date('1996-11-30')
+        }
+    );
+
+        // console.log({userSettings, areCredentialValid: userSettings.checkCredentials()});
+        console.log({ userSettings });
 
 })();

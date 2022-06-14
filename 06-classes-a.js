@@ -1,46 +1,53 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 (function () {
+    // Single-responsability principle
+    // Prioritize composition over inheritance.
     var Person = /** @class */ (function () {
-        function Person(name, gender, birthdate) {
+        function Person(_a) {
+            var name = _a.name, gender = _a.gender, birthdate = _a.birthdate;
             this.name = name;
             this.gender = gender;
             this.birthdate = birthdate;
         }
         return Person;
     }());
-    var User = /** @class */ (function (_super) {
-        __extends(User, _super);
-        function User(email, role, name, gender, birthdate) {
-            var _this = _super.call(this, name, gender, birthdate) || this;
-            _this.email = email;
-            _this.role = role;
-            _this.lastAccess = new Date();
-            return _this;
+    var User = /** @class */ (function () {
+        function User(_a) {
+            var email = _a.email, role = _a.role;
+            this.lastAccess = new Date();
+            this.email = email;
+            this.role = role;
         }
         User.prototype.checkCredentials = function () {
             return true;
         };
         return User;
-    }(Person));
-    var UserSettings = /** @class */ (function (_super) {
-        __extends(UserSettings, _super);
-        function UserSettings(workingDirectory, lastOpenFolder, email, role, name, gender, birthdate) {
-            return _super.call(this, email, role, name, gender, birthdate) || this;
+    }());
+    var Settings = /** @class */ (function () {
+        function Settings(_a) {
+            var workingDirectory = _a.workingDirectory, lastOpenFolder = _a.lastOpenFolder;
+            this.workingDirectory = workingDirectory;
+            this.lastOpenFolder = lastOpenFolder;
+        }
+        return Settings;
+    }());
+    var UserSettings = /** @class */ (function () {
+        function UserSettings(_a) {
+            var workingDirectory = _a.workingDirectory, lastOpenFolder = _a.lastOpenFolder, email = _a.email, role = _a.role, name = _a.name, gender = _a.gender, birthdate = _a.birthdate;
+            this.person = new Person({ name: name, gender: gender, birthdate: birthdate });
+            this.user = new User({ email: email, role: role });
+            this.settings = new Settings({ workingDirectory: workingDirectory, lastOpenFolder: lastOpenFolder });
         }
         return UserSettings;
-    }(User));
+    }());
+    var userSettings = new UserSettings({
+        workingDirectory: '/usr/home',
+        lastOpenFolder: '/home',
+        email: 'flubber@google.com',
+        role: 'Admin',
+        name: 'Flubber',
+        gender: 'M',
+        birthdate: new Date('1996-11-30')
+    });
+    // console.log({userSettings, areCredentialValid: userSettings.checkCredentials()});
+    console.log({ userSettings: userSettings });
 })();
